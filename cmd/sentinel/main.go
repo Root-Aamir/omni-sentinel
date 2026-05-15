@@ -15,18 +15,17 @@ type Task interface {
 
 func main() {
 	cfg, _ := utils.LoadConfig()
-	utils.SaveLog("System", "BOOT", "Engine Started")
-
-	if cfg.Telegram.Enabled {
-		utils.SendTelegramAlert(cfg.Telegram.Token, cfg.Telegram.ChatID, "🚀 Engine Online")
-	}
 
 	tasks := []Task{
 		scanner.Scout{
 			Target: cfg.Scout.Target, StartPort: cfg.Scout.StartPort, EndPort: cfg.Scout.EndPort,
 			TeleToken: cfg.Telegram.Token, TeleID: cfg.Telegram.ChatID,
 		},
-		trading.GoldWatcher{Symbol: cfg.Trading.Symbol},
+		trading.GoldWatcher{
+			Symbol:    cfg.Trading.Symbol,
+			TeleToken: cfg.Telegram.Token, TeleID: cfg.Telegram.ChatID,
+			TargetBuy: cfg.Trading.TargetBuy, TargetSell: cfg.Trading.TargetSell,
+		},
 	}
 
 	var wg sync.WaitGroup

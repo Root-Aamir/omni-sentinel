@@ -5,43 +5,35 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/Root-Aamir/omni-sentinel/pkg/utils" // Logger import kiya
+	"github.com/Root-Aamir/omni-sentinel/pkg/utils"
 )
 
-// GoldWatcher engine ke Task interface ko satisfy karta hai
 type GoldWatcher struct {
-	Symbol string
+	Symbol     string
+	TeleToken  string
+	TeleID     string
+	TargetBuy  float64
+	TargetSell float64
 }
 
-// Name module ki identity return karta hai
-func (g GoldWatcher) Name() string {
-	return "Quant-Intelligence: " + g.Symbol
-}
+func (g GoldWatcher) Name() string { return "Quant-Intelligence" }
 
-// Execute mein trading logic aur persistence hai
 func (g GoldWatcher) Execute() error {
-	fmt.Printf("[📈] %s: Starting Asian Session analysis...\n", g.Symbol)
+	fmt.Printf("[📈] %s: Monitoring market for targets...\n", g.Symbol)
 
-	// Simulate multiple price ticks (as if fetching from an API)
-	for i := 1; i <= 5; i++ {
-		time.Sleep(2 * time.Second) // Simulate real-time delay
+	// Simulation for 5 ticks
+	for i := 0; i < 5; i++ {
+		price := 2335.0 + rand.Float64()*(2365.0-2335.0)
+		fmt.Printf("    [Market] %s | Price: $%.2f\n", g.Symbol, price)
 
-		// Fake price generation (Aap baad mein real API yahan connect karenge)
-		price := 2340.0 + rand.Float64()*10
-		timestamp := time.Now().Format("15:04:05")
+		// Smart Alert Logic
+		if price <= g.TargetBuy {
+			utils.SendTelegramAlert(g.TeleToken, g.TeleID, fmt.Sprintf("📉 BUY SIGNAL: %s dropped to $%.2f", g.Symbol, price))
+		} else if price >= g.TargetSell {
+			utils.SendTelegramAlert(g.TeleToken, g.TeleID, fmt.Sprintf("📈 SELL SIGNAL: %s rose to $%.2f", g.Symbol, price))
+		}
 
-		fmt.Printf("    [Market] %s | Time: %s | Price: $%.2f\n", g.Symbol, timestamp, price)
-
-		// JSON Logging: Persistence for data analysis
-		utils.SaveLog("Trading", "MARKET-DATA", map[string]interface{}{
-			"symbol":    g.Symbol,
-			"price":     fmt.Sprintf("%.2f", price),
-			"currency":  "USD",
-			"session":   "Asian",
-			"tick_type": "Simulated",
-		})
+		time.Sleep(5 * time.Second)
 	}
-
-	fmt.Printf("[✔] %s: Session data logged successfully.\n", g.Symbol)
 	return nil
 }

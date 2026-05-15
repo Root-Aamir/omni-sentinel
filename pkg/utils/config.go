@@ -5,6 +5,7 @@ import (
 	"os"
 )
 
+// 1. Struct Definition (Pehle ye hona zaroori hai)
 type Config struct {
 	Scout struct {
 		Target    string `json:"target"`
@@ -12,8 +13,10 @@ type Config struct {
 		EndPort   int    `json:"end_port"`
 	} `json:"scout"`
 	Trading struct {
-		Symbol          string `json:"symbol"`
-		IntervalSeconds int    `json:"interval_seconds"`
+		Symbol          string  `json:"symbol"`
+		IntervalSeconds int     `json:"interval_seconds"`
+		TargetBuy       float64 `json:"target_buy"`
+		TargetSell      float64 `json:"target_sell"`
 	} `json:"trading"`
 	Telegram struct {
 		Token   string `json:"token"`
@@ -22,13 +25,28 @@ type Config struct {
 	} `json:"telegram"`
 }
 
+// 2. Function Definition
 func LoadConfig() (Config, error) {
 	var cfg Config
+
+	// JSON file read karein
 	file, err := os.Open("config.json")
-	if err != nil {
-		return cfg, err
+	if err == nil {
+		defer file.Close()
+		json.NewDecoder(file).Decode(&cfg)
 	}
-	defer file.Close()
-	err = json.NewDecoder(file).Decode(&cfg)
-	return cfg, err
+
+	// System Environment se secrets uthayein (Security)
+	envToken := os.Getenv("TELE_TOKEN")
+	envID := os.Getenv("TELE_ID")
+
+	if envToken != "" {
+		cfg.Telegram.Token = envToken
+		cfg.Telegram.Enabled = true
+	}
+	if envID != "" {
+		cfg.Telegram.ChatID = envID
+	}
+
+	return cfg, nil
 }
