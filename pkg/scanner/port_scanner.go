@@ -3,18 +3,34 @@ package scanner
 import (
 	"fmt"
 	"net"
+	"sync"
 	"time"
 )
 
-// ScanPort function ek specific IP aur Port ko check karti hai
-func ScanPort(target string, port int) {
-	address := fmt.Sprintf("%s:%d", target, port)
-	conn, err := net.DialTimeout("tcp", address, 2*time.Second)
+type Scout struct {
+	Target    string
+	StartPort int
+	EndPort   int
+}
 
-	if err != nil {
-		// Port band hai ya filter ho raha hai
-		return
+func (s Scout) Name() string { return "Scout (Port Scanner)" }
+
+func (s Scout) Execute() error {
+	var wg sync.WaitGroup
+	fmt.Printf("[+] Scout: Scanning %s (%d-%d)...\n", s.Target, s.StartPort, s.EndPort)
+
+	for p := s.StartPort; p <= s.EndPort; p++ {
+		wg.Add(1)
+		go func(port int) {
+			defer wg.Done()
+			address := fmt.Sprintf("%s:%d", s.Target, port)
+			conn, err := net.DialTimeout("tcp", address, 1*time.Second)
+			if err == nil {
+				fmt.Printf("   [!] OPEN: %d\n", port)
+				conn.Close()
+			}
+		}(p)
 	}
-	conn.Close()
-	fmt.Printf("[!] ALERT: Port %d is OPEN on %s\n", port, target)
+	wg.Wait()
+	return nil
 }
