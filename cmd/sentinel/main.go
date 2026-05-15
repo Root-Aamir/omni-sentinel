@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"sync"
 
+	"github.com/Root-Aamir/omni-sentinel/pkg/controller"
 	"github.com/Root-Aamir/omni-sentinel/pkg/scanner"
 	"github.com/Root-Aamir/omni-sentinel/pkg/trading"
 	"github.com/Root-Aamir/omni-sentinel/pkg/utils"
@@ -14,7 +16,11 @@ type Task interface {
 }
 
 func main() {
-	cfg, _ := utils.LoadConfig()
+	cfg, err := utils.LoadConfig()
+	if err != nil {
+		fmt.Println("Error loading config:", err)
+		return
+	}
 
 	tasks := []Task{
 		scanner.Scout{
@@ -26,15 +32,22 @@ func main() {
 			TeleToken: cfg.Telegram.Token, TeleID: cfg.Telegram.ChatID,
 			TargetBuy: cfg.Trading.TargetBuy, TargetSell: cfg.Trading.TargetSell,
 		},
+		controller.BotController{
+			Token: cfg.Telegram.Token, ChatID: cfg.Telegram.ChatID,
+		},
 	}
 
 	var wg sync.WaitGroup
+	fmt.Println("--- OMNI-SENTINEL v4.0 (Interactive) ---")
+
 	for _, task := range tasks {
 		wg.Add(1)
 		go func(t Task) {
 			defer wg.Done()
+			fmt.Printf("[+] Starting Module: %s\n", t.Name())
 			t.Execute()
 		}(task)
 	}
+
 	wg.Wait()
 }
