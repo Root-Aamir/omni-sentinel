@@ -5,32 +5,56 @@ import (
 	"net"
 	"sync"
 	"time"
+
+	"github.com/Root-Aamir/omni-sentinel/pkg/utils" // Logger utility import ki
 )
 
+// Scout structure engine ke Task interface ko satisfy karti hai
 type Scout struct {
 	Target    string
 	StartPort int
 	EndPort   int
 }
 
-func (s Scout) Name() string { return "Scout (Port Scanner)" }
+// Name module ka pehchan batata hai
+func (s Scout) Name() string {
+	return "Network-Scout (Port Scanner)"
+}
 
+// Execute mein asli scanning logic aur logging hai
 func (s Scout) Execute() error {
 	var wg sync.WaitGroup
-	fmt.Printf("[+] Scout: Scanning %s (%d-%d)...\n", s.Target, s.StartPort, s.EndPort)
+	fmt.Printf("[+] Scout: Initiating high-speed scan on %s...\n", s.Target)
 
-	for p := s.StartPort; p <= s.EndPort; p++ {
+	// Concurrency: Har port ke liye ek alag Goroutine
+	for port := s.StartPort; port <= s.EndPort; port++ {
 		wg.Add(1)
-		go func(port int) {
+
+		go func(p int) {
 			defer wg.Done()
-			address := fmt.Sprintf("%s:%d", s.Target, port)
+
+			address := fmt.Sprintf("%s:%d", s.Target, p)
+			// 1 second timeout for professional speed
 			conn, err := net.DialTimeout("tcp", address, 1*time.Second)
+
 			if err == nil {
-				fmt.Printf("   [!] OPEN: %d\n", port)
+				// Agar port open hai
+				resultMsg := fmt.Sprintf("Port %d is OPEN", p)
+				fmt.Printf("   [!] %s\n", resultMsg)
+
+				// JSON Log save karein (Persistence)
+				utils.SaveLog("Scout", "VULN-INFO", map[string]interface{}{
+					"target": s.Target,
+					"port":   p,
+					"status": "open",
+				})
+
 				conn.Close()
 			}
-		}(p)
+		}(port)
 	}
+
 	wg.Wait()
+	fmt.Printf("[✔] Scout: Scan on %s completed.\n", s.Target)
 	return nil
 }

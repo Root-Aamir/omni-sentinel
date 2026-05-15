@@ -3,62 +3,57 @@ package main
 import (
 	"fmt"
 	"sync"
-	"time"
 
 	"github.com/Root-Aamir/omni-sentinel/pkg/scanner"
 	"github.com/Root-Aamir/omni-sentinel/pkg/trading"
+	"github.com/Root-Aamir/omni-sentinel/pkg/utils" // Import utils for logs & config
 )
 
-// Task interface: Ye hamare engine ka 'Contract' hai.
-// Jo bhi naya module (Security ya Trading) banega, usme ye do cheezein honi chahiye.
 type Task interface {
 	Execute() error
 	Name() string
 }
 
 func main() {
-	// Professional Header
-	fmt.Println("=========================================================")
-	fmt.Println("🚀 OMNI-SENTINEL v2.5 | Multi-Engine Intelligence")
-	fmt.Println("Author: Aamir Akram | Mode: Specialist")
-	fmt.Println("Status: Active | Time:", time.Now().Format("15:04:05"))
-	fmt.Println("=========================================================")
+	// 1. Config Load Karein
+	cfg, err := utils.LoadConfig()
+	if err != nil {
+		fmt.Println("❌ Critical Error: Could not load config.json")
+		return
+	}
 
-	// Registry: Yahan hum apne modules ko load karte hain.
-	// Aap parallel mein jitne chahe modules chala sakte hain.
+	// 2. Boot Log Save Karein (Ab ye logs folder mein file banayega)
+	utils.SaveLog("System", "BOOT", "Engine v2.6 started with config.json")
+
+	fmt.Println("=========================================")
+	fmt.Println("🚀 OMNI-SENTINEL: CONFIG-DRIVEN ENGINE")
+	fmt.Println("=========================================")
+
+	// 3. Config se data utha kar modules initialize karein
 	tasks := []Task{
 		scanner.Scout{
-			Target:    "scanme.nmap.org",
-			StartPort: 20,
-			EndPort:   85,
+			Target:    cfg.Scout.Target,
+			StartPort: cfg.Scout.StartPort,
+			EndPort:   cfg.Scout.EndPort,
 		},
 		trading.GoldWatcher{
-			Symbol: "XAU/USD (Gold)",
+			Symbol: cfg.Trading.Symbol,
 		},
 	}
 
-	// WaitGroup ensures ke main program tab tak na ruke jab tak saare tasks khatam na ho jayein.
 	var wg sync.WaitGroup
-
 	for _, task := range tasks {
 		wg.Add(1)
-
-		// Goroutine: Har task ko alag 'Thread' par parallel chala raha hai.
 		go func(t Task) {
 			defer wg.Done()
-
 			fmt.Printf("[*] Launching: %s\n", t.Name())
-
 			if err := t.Execute(); err != nil {
-				fmt.Printf("[!] ERROR in %s: %v\n", t.Name(), err)
+				utils.SaveLog(t.Name(), "ERROR", err.Error())
 			}
 		}(task)
 	}
 
-	// Engine sabka wait karega
 	wg.Wait()
-
-	fmt.Println("=========================================================")
-	fmt.Println("✅ SYSTEM STANDBY: All concurrent tasks completed.")
-	fmt.Println("=========================================================")
+	utils.SaveLog("System", "SHUTDOWN", "All tasks completed.")
+	fmt.Println("\n[✔] Execution finished. Check logs folder.")
 }

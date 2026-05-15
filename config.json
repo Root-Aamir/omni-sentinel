@@ -1,0 +1,11 @@
+{
+  "scout": {
+    "target": "scanme.nmap.org",
+    "start_port": 20,
+    "end_port": 100
+  },
+  "trading": {
+    "symbol": "XAU/USD",
+    "interval_seconds": 2
+  }
+}
