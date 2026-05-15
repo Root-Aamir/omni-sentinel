@@ -7,5 +7,10 @@
   "trading": {
     "symbol": "XAU/USD",
     "interval_seconds": 2
+  },
+  "telegram": {
+    "token": "8947923263:AAF8kknEhzEi4KaNKm5CKzbRJUsFjnA4cAQ",
+    "chat_id": "1978014258",
+    "enabled": true
   }
 }

@@ -15,16 +15,20 @@ type Config struct {
 		Symbol          string `json:"symbol"`
 		IntervalSeconds int    `json:"interval_seconds"`
 	} `json:"trading"`
+	Telegram struct {
+		Token   string `json:"token"`
+		ChatID  string `json:"chat_id"`
+		Enabled bool   `json:"enabled"`
+	} `json:"telegram"`
 }
 
 func LoadConfig() (Config, error) {
 	var cfg Config
-	file, err := os.Open("config.json") // Extension .json honi chahiye
+	file, err := os.Open("config.json")
 	if err != nil {
 		return cfg, err
 	}
 	defer file.Close()
-
 	err = json.NewDecoder(file).Decode(&cfg)
 	return cfg, err
 }
