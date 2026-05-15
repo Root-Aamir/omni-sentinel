@@ -1,36 +1,43 @@
-# 🚀 Omni-Sentinel
+# 🛡️ OMNI-SENTINEL v6.5
+### Advanced Cyber-Financial Reconnaissance & Monitoring Suite
 
-**Omni-Sentinel** is a high-performance, multi-threaded framework built in **Go (Golang)**. It is designed to handle concurrent tasks across different domains, specifically focusing on **Cybersecurity Scanning** and **Trading Intelligence**.
+**Omni-Sentinel** is a high-performance, concurrent engine built in Go. It integrates network security reconnaissance (Subnet Discovery & Port Scanning) with real-time financial intelligence (Gold/XAU-USD Scalping Alerts) and a remote Command & Control (C2) interface via Telegram.
 
 ---
 
-## 🛠️ Key Features
+## 🚀 Key Features
 
--   **Interface-Based Architecture:** Modular design allowing easy integration of new security or trading modules.
--   **High Concurrency:** Utilizes Go's `goroutines` and `sync.WaitGroups` for parallel task execution.
--   **Scout Module:** Fast TCP port scanner for network reconnaissance.
--   **Trading Module:** Real-time market monitoring (XAU/USD) with simulated intelligence.
+* **⚡ Concurrent Scanning Engine**: Leverages Go-Routines for non-blocking, parallel scanning of multiple targets and ports.
+* **📡 Subnet Discovery**: Automatically identifies active devices on the local network (ARP/ICMP Discovery).
+* **📈 Quant Intelligence**: Monitors XAU/USD (Gold) market price targets and sends real-time trading signals.
+* **🕹️ Remote C2 (Command & Control)**: Fully interactive Telegram bot interface to monitor status, check prices, and trigger scans remotely.
+* **🔐 Hardened Security**: Zero-leak architecture using Environment Variables for API secrets. No sensitive data is ever stored in the repository.
+* **📜 Automated Logging**: Detailed JSON-based logging for audit trails and session analysis.
+
+---
+
+## 🛠️ Tech Stack
+
+* **Language**: Go (Golang) 1.20+
+* **Concurrency**: Goroutines & WaitGroups
+* **Integration**: Telegram Bot API
+* **Environment**: Cross-platform (Windows/Linux/macOS)
+
+---
 
 ## 📂 Project Structure
 
--   `cmd/sentinel/`: Main entry point and task orchestrator.
--   `pkg/scanner/`: Security modules (Port scanners, reconnaissance tools).
--   `pkg/trading/`: Financial intelligence modules (Price fetchers, indicators).
--   `pkg/utils/`: Shared utilities (Logging, network helpers).
+- `cmd/sentinel/main.go` - The Master Entry Point.
+- `pkg/scanner/` - Network Discovery & Port Fingerprinting logic.
+- `pkg/trading/` - Market data fetching & signal generation.
+- `pkg/controller/` - Telegram Command Center (C2).
+- `pkg/utils/` - Secure configuration & logging utilities.
 
-## 🚀 Getting Started
+---
 
-### Prerequisites
--   Go 1.20+
--   Git
+## ⚙️ Setup & Installation
 
-### Installation & Run
-```bash
-# Clone the repository
-git clone [https://github.com/Root-Aamir/omni-sentinel.git](https://github.com/Root-Aamir/omni-sentinel.git)
-
-# Initialize modules
-go mod tidy
-
-# Run the engine
-go run cmd/sentinel/main.go
+1. **Clone the repository**:
+   ```bash
+   git clone [https://github.com/Root-Aamir/omni-sentinel.git](https://github.com/Root-Aamir/omni-sentinel.git)
+   cd omni-sentinel
