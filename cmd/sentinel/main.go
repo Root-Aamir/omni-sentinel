@@ -24,21 +24,27 @@ func main() {
 
 	tasks := []Task{
 		scanner.Scout{
-			Target: cfg.Scout.Target, StartPort: cfg.Scout.StartPort, EndPort: cfg.Scout.EndPort,
-			TeleToken: cfg.Telegram.Token, TeleID: cfg.Telegram.ChatID,
+			Targets:   cfg.Scout.Targets,
+			StartPort: cfg.Scout.StartPort,
+			EndPort:   cfg.Scout.EndPort,
+			TeleToken: cfg.Telegram.Token,
+			TeleID:    cfg.Telegram.ChatID,
 		},
 		trading.GoldWatcher{
-			Symbol:    cfg.Trading.Symbol,
-			TeleToken: cfg.Telegram.Token, TeleID: cfg.Telegram.ChatID,
-			TargetBuy: cfg.Trading.TargetBuy, TargetSell: cfg.Trading.TargetSell,
+			Symbol:     cfg.Trading.Symbol,
+			TeleToken:  cfg.Telegram.Token,
+			TeleID:     cfg.Telegram.ChatID,
+			TargetBuy:  cfg.Trading.TargetBuy,
+			TargetSell: cfg.Trading.TargetSell,
 		},
 		controller.BotController{
-			Token: cfg.Telegram.Token, ChatID: cfg.Telegram.ChatID,
+			Token:  cfg.Telegram.Token,
+			ChatID: cfg.Telegram.ChatID,
 		},
 	}
 
 	var wg sync.WaitGroup
-	fmt.Println("--- OMNI-SENTINEL v4.0 (Interactive) ---")
+	fmt.Println("--- OMNI-SENTINEL v5.0 (Multi-Target) ---")
 
 	for _, task := range tasks {
 		wg.Add(1)

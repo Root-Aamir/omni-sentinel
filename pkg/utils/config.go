@@ -5,12 +5,11 @@ import (
 	"os"
 )
 
-// 1. Struct Definition (Pehle ye hona zaroori hai)
 type Config struct {
 	Scout struct {
-		Target    string `json:"target"`
-		StartPort int    `json:"start_port"`
-		EndPort   int    `json:"end_port"`
+		Targets   []string `json:"targets"` // Badla hua: Ab ye list hai
+		StartPort int      `json:"start_port"`
+		EndPort   int      `json:"end_port"`
 	} `json:"scout"`
 	Trading struct {
 		Symbol          string  `json:"symbol"`
@@ -25,18 +24,15 @@ type Config struct {
 	} `json:"telegram"`
 }
 
-// 2. Function Definition
 func LoadConfig() (Config, error) {
 	var cfg Config
-
-	// JSON file read karein
 	file, err := os.Open("config.json")
 	if err == nil {
 		defer file.Close()
 		json.NewDecoder(file).Decode(&cfg)
 	}
 
-	// System Environment se secrets uthayein (Security)
+	// Environment variables override
 	envToken := os.Getenv("TELE_TOKEN")
 	envID := os.Getenv("TELE_ID")
 

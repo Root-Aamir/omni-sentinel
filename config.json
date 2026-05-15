@@ -1,0 +1,18 @@
+{
+  "scout": {
+    "targets": ["scanme.nmap.org", "127.0.0.1"],
+    "start_port": 20,
+    "end_port": 100
+  },
+  "trading": {
+    "symbol": "XAU/USD",
+    "interval_seconds": 10,
+    "target_buy": 2340.00,
+    "target_sell": 2360.00
+  },
+  "telegram": {
+    "token": "",
+    "chat_id": "",
+    "enabled": false
+  }
+}
